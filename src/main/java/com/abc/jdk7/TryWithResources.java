@@ -22,20 +22,27 @@ public class TryWithResources {
      * 因为BufferedReader实例是在try-with-resource语句中声明的，
      * 所以无论try语句是正常还是异常（由于BufferedReader.readLine方法抛出IOException），它都将被关闭。
      */
-    static String readFirstLineFromFile(String path) throws IOException {
+    static void readFirstLineFromFile(String path) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            return br.readLine();
+            // 文件操作
+            br.readLine();
         }
     }
 
     // 在Java 7之前，我们使用finally块确保资源可以被正确关闭，无论try是正常还是异常
-    static String readFirstLineFromFileWithFinallyBlock(String path) throws IOException {
+    static void readFirstLineFromFileWithFinallyBlock(String path) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(path));
         try {
-            return br.readLine();
+            // 文件操作
+            br.readLine();
         } finally {
-            if (br != null) {
-                br.close();
+            // 防止finally的异常抑制业务代码中的异常
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
